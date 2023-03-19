@@ -38,7 +38,18 @@ contract CrowdFunding {
         return numberOfCampaigns - 1;
     }
 
-    function donateToCampaign(){
+    function donateToCampaign(uint256 _id) publi payable{
+        uint256 ammount = msg.value;
+
+        Campaign storage campaign = campaigns[_id];
+        campaign.donators.push(msg.sender);
+        campaign.donations.push(ammount);
+
+        (bool sent, ) = payable(campaign.owner).call{value: ammount}("");
+
+        if(sent){
+            campaign.ammountCollected = campaign.ammountCollected + ammount;
+        }
     }
     
     function getDonators(){
